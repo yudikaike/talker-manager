@@ -85,4 +85,18 @@ router.put('/:id',
   res.status(200).json(talkers[talkerIndex]);
 });
 
+router.delete('/:id', isTokenValid, async (req, res) => {
+  const { id } = req.params;
+
+  const talkers = await readContentFile(PATH_FILE) || [];
+
+  const talkerIndex = talkers.findIndex((t) => t.id === Number(id));
+
+  talkers.splice(talkerIndex, 1);
+
+  await updateContentFile(PATH_FILE, talkers);
+
+  res.status(204).end();
+});
+
 module.exports = router;
