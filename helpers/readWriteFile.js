@@ -22,7 +22,16 @@ const writeContentFile = async (path, content) => {
   }
 };
 
+const updateContentFile = async (path, content) => {
+  try {
+    await fs.writeFile(path, JSON.stringify(content));
+  } catch (error) {
+    return null;
+  }
+};
+
 module.exports = {
   readContentFile,
   writeContentFile,
+  updateContentFile,
 };

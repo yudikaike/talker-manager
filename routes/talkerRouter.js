@@ -5,6 +5,7 @@ const router = express.Router();
 const {
   readContentFile,
   writeContentFile,
+  updateContentFile,
 } = require('../helpers/readWriteFile');
 
 const isTokenValid = require('../middlewares/tokenValidation');
@@ -29,7 +30,7 @@ router.get('/:id', async (req, res) => {
   const { id } = req.params;
   const talkers = await readContentFile(PATH_FILE) || [];
 
-  const talker = talkers.find((tal) => tal.id === Number(id));
+  const talker = talkers.find((t) => t.id === Number(id));
 
   if (!talker) return res.status(404).json({ message: 'Pessoa palestrante não encontrada' });
 
@@ -61,6 +62,27 @@ router.post('/',
   await writeContentFile(PATH_FILE, newTalker);
 
   res.status(201).json(newTalker);
+});
+
+router.put('/:id',
+  isTokenValid,
+  isNameValid,
+  isAgeValid,
+  isTalkValid,
+  isWatchedAtValid,
+  isRateValid,
+  async (req, res) => {
+  const { id } = req.params;
+  const { name, age, talk: { watchedAt, rate } } = req.body;
+
+  const talkers = await readContentFile(PATH_FILE) || [];
+  const talkerIndex = talkers.findIndex((t) => t.id === Number(id));
+
+  talkers[talkerIndex] = { ...talkers[talkerIndex], name, age, talk: { watchedAt, rate } };
+
+  await updateContentFile(PATH_FILE, talkers);
+
+  res.status(200).json(talkers[talkerIndex]);
 });
 
 module.exports = router;
