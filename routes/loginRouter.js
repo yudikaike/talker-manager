@@ -2,16 +2,15 @@ const express = require('express');
 
 const router = express.Router();
 
-const setToken = require('../helpers/setToken');
+const getToken = require('../middlewares/getToken');
 
 const {
   isEmailValid,
   isPasswordValid,
-} = require('../middlewares/validation');
+} = require('../middlewares/loginValidation');
 
-router.post('/', isEmailValid, isPasswordValid, async (req, res) => {
-  const { email } = req.body;
-  const token = setToken(email);
+router.post('/', isEmailValid, isPasswordValid, getToken, async (req, res) => {
+  const { token } = req.token;
 
   res.status(200).json({ token });
 });
