@@ -4,7 +4,12 @@ const router = express.Router();
 
 const setToken = require('../helpers/setToken');
 
-router.post('/', async (req, res) => {
+const {
+  isEmailValid,
+  isPasswordValid,
+} = require('../middlewares/validation');
+
+router.post('/', isEmailValid, isPasswordValid, async (req, res) => {
   const { email } = req.body;
   const token = setToken(email);
 
