@@ -26,6 +26,16 @@ router.get('/', async (_req, res) => {
   res.status(200).json(talkers);
 });
 
+router.get('/search', isTokenValid, async (req, res) => {
+  const { q: query } = req.query;
+
+  const talkers = await readContentFile(PATH_FILE) || [];
+
+  const filteredTalkers = talkers.filter(({ name }) => name.includes(query));
+
+  res.status(200).json(filteredTalkers);
+});
+
 router.get('/:id', async (req, res) => {
   const { id } = req.params;
   const talkers = await readContentFile(PATH_FILE) || [];
